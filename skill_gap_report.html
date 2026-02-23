@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Skill Gap Report – python developer</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; }
+  .hero { background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%); padding: 48px 32px; text-align: center; border-bottom: 1px solid #334155; }
+  .hero h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; }
+  .hero p { margin-top: 8px; color: #94a3b8; font-size: 1rem; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center; }
+  .stat-card .number { font-size: 2rem; font-weight: 700; color: #60a5fa; }
+  .stat-card .label { font-size: 0.85rem; color: #94a3b8; margin-top: 4px; }
+  .section { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .section h2 { font-size: 1.2rem; font-weight: 600; color: #f1f5f9; margin-bottom: 16px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  canvas { max-height: 280px; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.78rem; margin: 2px; }
+  .tag-matched { background: #166534; color: #86efac; border: 1px solid #16a34a; }
+  .tag-missing { background: #7f1d1d; color: #fca5a5; border: 1px solid #dc2626; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; color: white; font-size: 0.8rem; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { background: #0f172a; padding: 10px 8px; text-align: left; color: #94a3b8; font-weight: 600; border-bottom: 1px solid #334155; }
+  td { padding: 10px 8px; border-bottom: 1px solid #1e293b; vertical-align: top; }
+  tr:hover td { background: #243447; }
+  a { color: #60a5fa; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .cat-row { margin-bottom: 12px; }
+  .cat-row strong { display: block; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .rec-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #334155; }
+  .rec-freq { font-size: 0.82rem; color: #94a3b8; }
+  .match-bar { background: #334155; border-radius: 4px; height: 8px; width: 100%; margin-top: 4px; }
+  .match-fill { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #3b82f6, #22c55e); }
+  @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>📊 Skill Gap Report</h1>
+  <p>Query: <strong>python developer</strong> · Location: <strong>Canada</strong> · Generated: February 23, 2026 12:44</p>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="number">20</div>
+      <div class="label">Jobs Analyzed</div>
+    </div>
+    <div class="stat-card">
+      <div class="number" style="color:#22c55e">32%</div>
+      <div class="label">Avg Match Rate</div>
+    </div>
+    <div class="stat-card">
+      <div class="number" style="color:#f59e0b">16</div>
+      <div class="label">Skill Gaps Found</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">46</div>
+      <div class="label">Your Skills Detected</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">27</div>
+      <div class="label">Unique Skills in Jobs</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="section">
+      <h2>🔴 Top Missing Skills</h2>
+      <canvas id="missingChart"></canvas>
+    </div>
+    <div class="section">
+      <h2>🟢 Your Strongest Skills</h2>
+      <canvas id="matchingChart"></canvas>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📂 Coverage by Category</h2>
+    <canvas id="categoryChart"></canvas>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="section">
+    <h2>🎯 Top Skills to Learn</h2>
+    
+        <div class="rec-item">
+            <span class="tag tag-missing">firewall</span>
+            <span class="rec-freq">Required in 20% of jobs (4/20)</span>
+        </div>
+        <div class="rec-item">
+            <span class="tag tag-missing">azure</span>
+            <span class="rec-freq">Required in 15% of jobs (3/20)</span>
+        </div>
+        <div class="rec-item">
+            <span class="tag tag-missing">oracle</span>
+            <span class="rec-freq">Required in 15% of jobs (3/20)</span>
+        </div>
+        <div class="rec-item">
+            <span class="tag tag-missing">research</span>
+            <span class="rec-freq">Required in 10% of jobs (2/20)</span>
+        </div>
+        <div class="rec-item">
+            <span class="tag tag-missing">vue</span>
+            <span class="rec-freq">Required in 10% of jobs (2/20)</span>
+        </div>
+        <div class="rec-item">
+            <span class="tag tag-missing">r</span>
+            <span class="rec-freq">Required in 10% of jobs (2/20)</span>
+        </div>
+        <div class="rec-item">
+            <span class="tag tag-missing">jira</span>
+            <span class="rec-freq">Required in 10% of jobs (2/20)</span>
+        </div>
+        <div class="rec-item">
+            <span class="tag tag-missing">laravel</span>
+            <span class="rec-freq">Required in 5% of jobs (1/20)</span>
+        </div>
+        <div class="rec-item">
+            <span class="tag tag-missing">tailwind</span>
+            <span class="rec-freq">Required in 5% of jobs (1/20)</span>
+        </div>
+        <div class="rec-item">
+            <span class="tag tag-missing">pytorch</span>
+            <span class="rec-freq">Required in 5% of jobs (1/20)</span>
+        </div>
+  </div>
+
+  <!-- Resume Skills -->
+  <div class="section">
+    <h2>✅ Skills Detected in Your Resume</h2>
+    <div class='cat-row'><strong>Programming Languages</strong><div><span class="tag tag-matched">python</span> <span class="tag tag-matched">java</span> <span class="tag tag-matched">javascript</span> <span class="tag tag-matched">go</span> <span class="tag tag-matched">bash</span> <span class="tag tag-matched">ruby</span> <span class="tag tag-matched">sql</span></div></div><div class='cat-row'><strong>Web & Frontend</strong><div><span class="tag tag-matched">react</span> <span class="tag tag-matched">html</span> <span class="tag tag-matched">css</span> <span class="tag tag-matched">restful</span> <span class="tag tag-matched">html/css</span></div></div><div class='cat-row'><strong>Backend & Frameworks</strong><div><span class="tag tag-matched">node.js</span> <span class="tag tag-matched">microservices</span> <span class="tag tag-matched">distributed systems</span></div></div><div class='cat-row'><strong>Machine Learning & AI</strong><div><span class="tag tag-matched">byzantine</span></div></div><div class='cat-row'><strong>Databases</strong><div><span class="tag tag-matched">mysql</span> <span class="tag tag-matched">postgresql</span> <span class="tag tag-matched">mongodb</span> <span class="tag tag-matched">redis</span></div></div><div class='cat-row'><strong>DevOps & Cloud</strong><div><span class="tag tag-matched">docker</span> <span class="tag tag-matched">kubernetes</span> <span class="tag tag-matched">aws</span> <span class="tag tag-matched">jenkins</span> <span class="tag tag-matched">ci/cd</span></div></div><div class='cat-row'><strong>Networking & Security</strong><div><span class="tag tag-matched">network security</span></div></div><div class='cat-row'><strong>Blockchain & Web3</strong><div><span class="tag tag-matched">ethereum</span> <span class="tag tag-matched">smart contracts</span> <span class="tag tag-matched">blockchain</span> <span class="tag tag-matched">decentralized</span> <span class="tag tag-matched">consensus</span> <span class="tag tag-matched">fault.tolerance</span></div></div><div class='cat-row'><strong>Tools & Practices</strong><div><span class="tag tag-matched">git</span> <span class="tag tag-matched">agile</span> <span class="tag tag-matched">pytest</span> <span class="tag tag-matched">junit</span> <span class="tag tag-matched">selenium</span> <span class="tag tag-matched">load testing</span> <span class="tag tag-matched">test automation</span> <span class="tag tag-matched">ci/cd pipelines</span></div></div><div class='cat-row'><strong>Soft Skills & Other</strong><div><span class="tag tag-matched">communication</span> <span class="tag tag-matched">mandarin</span> <span class="tag tag-matched">chinese</span> <span class="tag tag-matched">english</span> <span class="tag tag-matched">teaching</span> <span class="tag tag-matched">mentoring</span></div></div>
+  </div>
+
+
+  <!-- Recommendations -->
+  <div class="section">
+    <h2>💡 Personalized Action Plan</h2>
+    
+        <div class="rec-card">
+          <div class="rec-header">
+            <span class="rec-icon">📈</span>
+            <div>
+              <div class="rec-title">Skill match at 32% — a few targeted additions will make a big difference</div>
+              <span class="rec-badge" style="background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44">Medium</span>
+            </div>
+          </div>
+          <div class="rec-detail">You're in good shape. Focus on the top 3-5 missing skills below to push your match rate above 50%.</div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-header">
+            <span class="rec-icon">📂</span>
+            <div>
+              <div class="rec-title">Weak coverage in Machine Learning & AI (0%)</div>
+              <span class="rec-badge" style="background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44">Medium</span>
+            </div>
+          </div>
+          <div class="rec-detail">You're missing: pytorch, deep learning, machine learning. Adding even 1-2 of these to a project will improve this category significantly.</div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-header">
+            <span class="rec-icon">📂</span>
+            <div>
+              <div class="rec-title">Weak coverage in Tools & Practices (33%)</div>
+              <span class="rec-badge" style="background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44">Medium</span>
+            </div>
+          </div>
+          <div class="rec-detail">You're missing: jira, scrum. Adding even 1-2 of these to a project will improve this category significantly.</div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-header">
+            <span class="rec-icon">📝</span>
+            <div>
+              <div class="rec-title">Tailor your resume keywords for each application</div>
+              <span class="rec-badge" style="background:#22c55e22;color:#22c55e;border:1px solid #22c55e44">Low Priority</span>
+            </div>
+          </div>
+          <div class="rec-detail">Copy keywords directly from job descriptions into your resume where truthful. ATS systems scan for exact matches. For example, if a job says 'CI/CD pipelines' use that exact phrase, not just 'CI/CD'.</div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-header">
+            <span class="rec-icon">🎓</span>
+            <div>
+              <div class="rec-title">Your Master's degree is a competitive advantage — highlight it</div>
+              <span class="rec-badge" style="background:#22c55e22;color:#22c55e;border:1px solid #22c55e44">Low Priority</span>
+            </div>
+          </div>
+          <div class="rec-detail">Grad degrees are mentioned in 2 of the analyzed jobs. Make sure your thesis project is prominently featured as real work experience.</div>
+        </div>
+  </div>
+
+  <!-- Experience Comparison -->
+  <div class="section">
+    <h2>💼 Experience & Education Requirements</h2>
+    <div class="exp-grid">
+      <div class="exp-card">
+        <div class="exp-number" style="color:#60a5fa">2.9yr</div>
+        <div class="exp-label">Your Experience</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-number" style="color:#f59e0b">0yr</div>
+        <div class="exp-label">Most Jobs Require</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-number" style="color:#22c55e">100%</div>
+        <div class="exp-label">Jobs You Meet Exp. For</div>
+      </div>
+    </div>
+    <div style="margin-bottom:12px"><strong style="color:#94a3b8;font-size:0.8rem">DEGREES MENTIONED IN JOB POSTINGS</strong><div style="margin-top:6px"><span class="tag tag-matched">Master's: 2 jobs</span><span class="tag tag-matched">Bachelor's: 1 jobs</span></div></div>
+    
+        <div class="exp-entry">
+          <div><div class="exp-title">Software Test Engineer (Remote)</div>
+               <div class="exp-company">AoJun Technology Co., Ltd.</div></div>
+          <div style="text-align:right">
+            <div class="exp-dates">May 2024 – Aug 2024</div>
+            <div style="color:#94a3b8;font-size:0.8rem">0yr 3mo</div>
+          </div>
+        </div>
+        <div class="exp-entry">
+          <div><div class="exp-title">Software Test Engineer (Remote)</div>
+               <div class="exp-company">Anmwave Technology Co., Ltd.</div></div>
+          <div style="text-align:right">
+            <div class="exp-dates">May 2023 – Aug 2023</div>
+            <div style="color:#94a3b8;font-size:0.8rem">0yr 3mo</div>
+          </div>
+        </div>
+        <div class="exp-entry">
+          <div><div class="exp-title">Teaching Assistant</div>
+               <div class="exp-company">Dalhousie University CS Department</div></div>
+          <div style="text-align:right">
+            <div class="exp-dates">Sep 2023 – Present</div>
+            <div style="color:#94a3b8;font-size:0.8rem">2yr 5mo</div>
+          </div>
+        </div>
+  </div>
+
+  <!-- Job Table -->
+  <div class="section">
+    <h2>💼 Job Postings (sorted by match)</h2>
+    <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Job</th>
+          <th>Location</th>
+          <th>Match</th>
+          <th>Your Skills ✓</th>
+          <th>Missing Skills ✗</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+            <td><strong>Führungskraft (m/w/d) als Leiter Unternehmenscontrolling</strong><br><small>RiJu Connecting GmbH</small></td>
+            <td>Stuttgart</td>
+            <td><span class="badge" style="background:#22c55e">100%</span></td>
+            <td><span class="tag tag-matched">english</span></td>
+            <td></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/riju-connecting-gmbh/fuhrungskraft-als-leiter-unternehmenscontrolling-stuttgart-373642" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Senior Polarion Consultant (Freelance, Remote)</strong><br><small>Sidekick Network GmbH & Co. KG</small></td>
+            <td>Hanover</td>
+            <td><span class="badge" style="background:#22c55e">100%</span></td>
+            <td><span class="tag tag-matched">communication</span> <span class="tag tag-matched">english</span></td>
+            <td></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/sidekick-network-gmbh-co-kg/senior-polarion-consultant-freelance-remote-hanover-264377" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Assistenz Projekt- und Dokumentationsunterstützung</strong><br><small>Sit consulting GmbH</small></td>
+            <td>Erftstadt</td>
+            <td><span class="badge" style="background:#22c55e">100%</span></td>
+            <td><span class="tag tag-matched">english</span></td>
+            <td></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/sit-consulting-gmbh/assistenz-projekt-und-dokumentationsunterstutzung-erftstadt-352217" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Senior Data Engineer (f/m/d) - Backend Development Experience</strong><br><small>ONCARE GmbH</small></td>
+            <td>Munich</td>
+            <td><span class="badge" style="background:#22c55e">71%</span></td>
+            <td><span class="tag tag-matched">restful</span> <span class="tag tag-matched">python</span> <span class="tag tag-matched">sql</span> <span class="tag tag-matched">git</span> <span class="tag tag-matched">docker</span></td>
+            <td><span class="tag tag-missing">research</span> <span class="tag tag-missing">scrum</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/oncare-gmbh/senior-data-engineer-backend-development-experience-munich-159383" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Technical Account Manager - DACH</strong><br><small>SolarEdge</small></td>
+            <td>Munich</td>
+            <td><span class="badge" style="background:#f59e0b">50%</span></td>
+            <td><span class="tag tag-matched">english</span></td>
+            <td><span class="tag tag-missing">research</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/solaredge/remote-technical-account-manager-dach-munich-354588" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Machine Learning Engineer</strong><br><small>NewNow Group</small></td>
+            <td>Frankfurt am Main</td>
+            <td><span class="badge" style="background:#f59e0b">44%</span></td>
+            <td><span class="tag tag-matched">aws</span> <span class="tag tag-matched">python</span> <span class="tag tag-matched">ci/cd</span> <span class="tag tag-matched">english</span></td>
+            <td><span class="tag tag-missing">azure</span> <span class="tag tag-missing">pytorch</span> <span class="tag tag-missing">machine learning</span> <span class="tag tag-missing">deep learning</span> <span class="tag tag-missing">rust</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/newnow-group/machine-learning-engineer-frankfurt-am-main-157542" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Senior Frontend Entwickler –  React (m|w|d)</strong><br><small>Assecor GmbH</small></td>
+            <td>Berlin</td>
+            <td><span class="badge" style="background:#f59e0b">43%</span></td>
+            <td><span class="tag tag-matched">react</span> <span class="tag tag-matched">css</span> <span class="tag tag-matched">docker</span></td>
+            <td><span class="tag tag-missing">azure</span> <span class="tag tag-missing">vue</span> <span class="tag tag-missing">typescript</span> <span class="tag tag-missing">angular</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/assecor-gmbh/senior-frontend-entwickler-react-mwd-berlin-71465" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Web Developer (m/w/d)</strong><br><small>webhub</small></td>
+            <td>Rostock</td>
+            <td><span class="badge" style="background:#f59e0b">33%</span></td>
+            <td><span class="tag tag-matched">react</span> <span class="tag tag-matched">css</span></td>
+            <td><span class="tag tag-missing">laravel</span> <span class="tag tag-missing">vue</span> <span class="tag tag-missing">r</span> <span class="tag tag-missing">tailwind</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/webhub/web-developer-rostock-488515" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Systemadministrator (m/w/d) IT-Infrastruktur / Gesundheitswesen</strong><br><small>Intercon Solutions GmbH</small></td>
+            <td>Mainz</td>
+            <td><span class="badge" style="background:#f59e0b">33%</span></td>
+            <td><span class="tag tag-matched">sql</span></td>
+            <td><span class="tag tag-missing">oracle</span> <span class="tag tag-missing">firewall</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/intercon-solutions-gmbh/systemadministrator-it-infrastruktur-gesundheitswesen-mainz-250787" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Systemadministrator (m/w/d) IT-Infrastruktur / Gesundheitswesen</strong><br><small>Intercon Solutions GmbH</small></td>
+            <td>Frankfurt am Main</td>
+            <td><span class="badge" style="background:#f59e0b">33%</span></td>
+            <td><span class="tag tag-matched">sql</span></td>
+            <td><span class="tag tag-missing">oracle</span> <span class="tag tag-missing">firewall</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/intercon-solutions-gmbh/systemadministrator-it-infrastruktur-gesundheitswesen-frankfurt-am-main-491747" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Systemadministrator (m/w/d) IT-Infrastruktur / Gesundheitswesen</strong><br><small>Intercon Solutions GmbH</small></td>
+            <td>Wiesbaden</td>
+            <td><span class="badge" style="background:#f59e0b">33%</span></td>
+            <td><span class="tag tag-matched">sql</span></td>
+            <td><span class="tag tag-missing">oracle</span> <span class="tag tag-missing">firewall</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/intercon-solutions-gmbh/systemadministrator-it-infrastruktur-gesundheitswesen-wiesbaden-7062" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>User Success Specialist (w/m/d)</strong><br><small>Fuji Electric Europe GmbH</small></td>
+            <td>Offenbach</td>
+            <td><span class="badge" style="background:#ef4444">0%</span></td>
+            <td></td>
+            <td><span class="tag tag-missing">azure</span> <span class="tag tag-missing">firewall</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/fuji-electric-europe-gmbh/user-success-specialist-offenbach-293837" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>SAP EHS Entwickler (m/w/d) (Ref.Nr.: 46205)</strong><br><small>Wavestone Germany AG</small></td>
+            <td>Munich</td>
+            <td><span class="badge" style="background:#ef4444">0%</span></td>
+            <td></td>
+            <td></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/wavestone-germany-ag/sap-ehs-entwickler-refnr-46205-munich-155008" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Test- und Business-Analyst (m/w/d) mit Versicherungs-Know-how (Ref.Nr.: 46197)</strong><br><small>Wavestone Germany AG</small></td>
+            <td>Berlin</td>
+            <td><span class="badge" style="background:#ef4444">0%</span></td>
+            <td></td>
+            <td><span class="tag tag-missing">jira</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/wavestone-germany-ag/test-und-business-analyst-mit-versicherungs-know-how-refnr-46197-berlin-313088" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Test Analyst (m/w/d) im Versicherungsumfeld (Ref.Nr.: 46195)</strong><br><small>Wavestone Germany AG</small></td>
+            <td>Berlin</td>
+            <td><span class="badge" style="background:#ef4444">0%</span></td>
+            <td></td>
+            <td><span class="tag tag-missing">jira</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/wavestone-germany-ag/test-analyst-im-versicherungsumfeld-refnr-46195-berlin-247905" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>OT-Security Manager (m/w/d)</strong><br><small>c.cure - Geschäftsbereich der Megamaris GmbH</small></td>
+            <td>Schwäbisch Hall</td>
+            <td><span class="badge" style="background:#ef4444">0%</span></td>
+            <td></td>
+            <td></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/ccure-geschaftsbereich-der-megamaris-gmbh/ot-security-manager-schwabisch-hall-248508" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Head of Controlling BeNeDACH (m/w/d)</strong><br><small>Hello Lemon GmbH</small></td>
+            <td>Düsseldorf</td>
+            <td><span class="badge" style="background:#ef4444">0%</span></td>
+            <td></td>
+            <td></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/hello-lemon-gmbh/head-of-controlling-benedach-dusseldorf-281159" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Werkstudent*in SEO & Content Marketing (m/w/d)</strong><br><small>PiAL Consult GmbH</small></td>
+            <td>Hamburg</td>
+            <td><span class="badge" style="background:#ef4444">0%</span></td>
+            <td></td>
+            <td><span class="tag tag-missing">r</span></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/pial-consult-gmbh/werkstudentin-seo-content-marketing-hamburg-19041" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Referent Digitale Transformation (m/w/d)</strong><br><small>Nau Steuerberater Partnerschaft mbB</small></td>
+            <td>Frankfurt am Main</td>
+            <td><span class="badge" style="background:#ef4444">0%</span></td>
+            <td></td>
+            <td></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/nau-steuerberater-partnerschaft-mbb/referent-digitale-transformation-frankfurt-am-main-205290" target="_blank">View</a></td>
+        </tr>
+        <tr>
+            <td><strong>Opener / Setter</strong><br><small>ImmoScout24 BaufiTeam</small></td>
+            <td>Dachau</td>
+            <td><span class="badge" style="background:#ef4444">0%</span></td>
+            <td></td>
+            <td></td>
+            <td><a href="https://www.arbeitnow.com/jobs/companies/immoscout24-baufiteam/opener-setter-dachau-343665" target="_blank">View</a></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const missingLabels = ["firewall", "azure", "oracle", "research", "vue", "r", "jira", "laravel", "tailwind", "pytorch", "machine learning", "deep learning", "rust", "typescript", "angular"];
+const missingData = [4, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1];
+const matchingLabels = ["english", "sql", "react", "css", "python", "docker", "aws", "ci/cd", "restful", "git"];
+const matchingData = [5, 4, 2, 2, 2, 2, 1, 1, 1, 1];
+const catLabels = ["Programming Languages", "Web & Frontend", "Backend & Frameworks", "Machine Learning & AI", "Databases", "DevOps & Cloud", "Networking & Security", "Tools & Practices", "Soft Skills & Other"];
+const catData = [40.0, 50.0, 0.0, 0.0, 0.0, 75.0, 0.0, 33.3, 66.7];
+
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#334155';
+
+new Chart(document.getElementById('missingChart'), {
+  type: 'bar',
+  data: {
+    labels: missingLabels,
+    datasets: [{ label: 'Job postings requiring this skill', data: missingData, backgroundColor: '#ef4444aa', borderColor: '#ef4444', borderWidth: 1 }]
+  },
+  options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#334155' } }, y: { grid: { color: '#334155' } } } }
+});
+
+new Chart(document.getElementById('matchingChart'), {
+  type: 'bar',
+  data: {
+    labels: matchingLabels,
+    datasets: [{ label: 'Frequency in job postings', data: matchingData, backgroundColor: '#22c55eaa', borderColor: '#22c55e', borderWidth: 1 }]
+  },
+  options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#334155' } }, y: { grid: { color: '#334155' } } } }
+});
+
+new Chart(document.getElementById('categoryChart'), {
+  type: 'bar',
+  data: {
+    labels: catLabels,
+    datasets: [{ label: 'Coverage %', data: catData, backgroundColor: catData.map(v => v >= 60 ? '#22c55eaa' : v >= 30 ? '#f59e0baa' : '#ef4444aa'), borderWidth: 1 }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { max: 100, title: { display: true, text: 'Coverage (%)' } }, x: { grid: { color: '#334155' } } } }
+});
+</script>
+</body>
+</html>
