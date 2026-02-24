@@ -1,0 +1,7 @@
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+pdfplumber>=0.10.0
+rich>=13.7.0
+click>=8.1.0
+python-dateutil>=2.8.0
+python-dotenv>=1.0.0

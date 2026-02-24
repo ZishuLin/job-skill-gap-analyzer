@@ -1,0 +1,22 @@
+# Report outputs
+*.html
+
+# Resume (don't upload personal data)
+*.pdf
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
+
+# Node
+node_modules/
+package-lock.json
+resume_data.json
+
+# OS
+.DS_Store
+Thumbs.db

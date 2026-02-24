@@ -105,6 +105,13 @@ def analyze_skill_gap(
             "exp_match": exp_match,
         })
 
+    # Filter out non-tech roles (sales, marketing, etc.)
+    NON_TECH_KEYWORDS = {"account executive", "sales", "marketing", "recruiter", "hr ", "human resources", "business development", "account manager", "praktikant", "grafikdesign", "graphic design", "designer", "content creation", "social media", "copywriter", "videographer", "photographer", "illustrator", "motion", "brand"}
+    job_analyses = [
+        j for j in job_analyses
+        if not any(kw in j["title"].lower() for kw in NON_TECH_KEYWORDS)
+    ] or job_analyses  # fallback to all if filter removes everything
+
     job_analyses.sort(key=lambda x: x["match_pct"], reverse=True)
 
     skill_counter = Counter(all_job_skills)
